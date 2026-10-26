@@ -235,7 +235,7 @@ selected_module:
   # 语音识别模块，默认使用FunASR本地模型
   ASR: FunASR
   # 将根据配置名称对应的type调用实际的LLM适配器
-  LLM: ChatGLMLLM
+  LLM: OllamaLLM
   # 视觉语言大模型
   VLLM: ChatGLMVLLM
   # TTS将根据配置名称对应的type调用实际的TTS适配器
@@ -661,7 +661,7 @@ LLM:
   OllamaLLM:
     # 定义LLM API类型
     type: ollama
-    model_name: qwen2.5 #  使用的模型名称，需要预先使用ollama pull下载
+    model_name: qwen3.6:35b-mlx # 本地 Ollama 模型，ollama list 查看可用名称
     base_url: http://localhost:11434  # Ollama服务地址
   DifyLLM:
     # 定义LLM API类型

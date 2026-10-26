@@ -24,6 +24,12 @@ class LLMProvider(LLMProviderBase):
         # 检查是否是qwen3模型
         self.is_qwen3 = self.model_name and self.model_name.lower().startswith("qwen3")
 
+    def _get_completion_kwargs(self):
+        """qwen3.6 等思考模型需关闭 reasoning，否则 content 为空"""
+        if self.is_qwen3:
+            return {"extra_body": {"reasoning_effort": "none"}}
+        return {}
+
     def response(self, session_id, dialogue, **kwargs):
         # 如果是qwen3模型，在用户最后一条消息中添加/no_think指令
         if self.is_qwen3:
@@ -44,7 +50,10 @@ class LLMProvider(LLMProviderBase):
             dialogue = dialogue_copy
 
         responses = self.client.chat.completions.create(
-            model=self.model_name, messages=dialogue, stream=True
+            model=self.model_name,
+            messages=dialogue,
+            stream=True,
+            **self._get_completion_kwargs(),
         )
         is_active = True
         # 用于处理跨chunk的标签
@@ -115,6 +124,7 @@ class LLMProvider(LLMProviderBase):
             messages=dialogue,
             stream=True,
             tools=functions,
+            **self._get_completion_kwargs(),
         )
 
         is_active = True
